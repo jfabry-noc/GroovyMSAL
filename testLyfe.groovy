@@ -19,15 +19,21 @@ import groovy.json.JsonSlurper
 import java.util.concurrent.CompletableFuture
 
 
-// Function to get an access token.
-def GetAccessToken(String clientId, String authority, String secret, String scope) {
-    // Create the app.
-    ConfidentialClientApplication app = ConfidentialClientApplication.builder(clientId, ClientCredentialFactory.createFromSecret(secret)).authority(authority).build()
-    ClientCredentialParameters clientCredentialParam = ClientCredentialParameters.builder(Collections.singleton(scope)).build()
-    def future = app.acquireToken(clientCredentialParam)
+private static IAuthenticationResult getAccessTokenByClientCredentialGrant(String clientId, String authority, String secret, String scope) throws Exception {
+    ConfidentialClientApplication app = ConfidentialClientApplication.builder(
+            clientId,
+            ClientCredentialFactory.createFromSecret(secret))
+            .authority(authority)
+            .build();
 
-    // Return to the caller.
-    future.get()
+    // With client credentials flows the scope is ALWAYS of the shape "resource/.default", as the
+    // application permissions need to be set statically (in the portal), and then granted by a tenant administrator
+    ClientCredentialParameters clientCredentialParam = ClientCredentialParameters.builder(
+            Collections.singleton(scope))
+            .build();
+
+    CompletableFuture<IAuthenticationResult> future = app.acquireToken(clientCredentialParam);
+    return future.get();
 }
 
 // Function to query the graph for users.
@@ -62,6 +68,8 @@ try {
 }
 
 // Call for an access token.
-def accessToken = GetAccessToken(aadConfig.client_id, aadConfig.authority, aadConfig.secret, aadConfig.scope)
+//def accessToken = GetAccessToken(aadConfig.client_id, aadConfig.authority, aadConfig.secret, aadConfig.scope)
+def accessToken = getAccessTokenByClientCredentialGrant(aadConfig.client_id, aadConfig.authority, aadConfig.secret, aadConfig.scope)
+println accessToken
 def userList = GetUsersListFromGraph(accessToken)
 println userList
