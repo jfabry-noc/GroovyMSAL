@@ -1,2 +1,3 @@
 # GroovyMSAL
-Using Microsoft's msal4j library with Groovy rather than Java.
+
+Using Microsoft's [msal4j](https://github.com/AzureAD/microsoft-authentication-library-for-java) library with Groovy rather than Java. This is a sample modifying [Microsoft's sample code](https://github.com/AzureAD/microsoft-authentication-library-for-java/blob/dev/src/samples/confidential-client/ClientCredentialGrant.java) in vanilla Java for Groovy, along with a sample function to query for users in the tenant to validate the functionality. The sample leverages [Grape](http://docs.groovy-lang.org/latest/html/documentation/grape.html) for the dependencies. The information in the tenant is stored in a local `o365.json` file in the same directory as the Groovy script and requires all of the same pieces as Microsoft's Java sample.
